@@ -1,0 +1,30 @@
+version: "2.1"
+services:
+    mongo:
+        image: mongo
+        container_name: "backend_mon"
+        volumes:
+            - ./data:/data/db
+        ports:
+            - "27017:27017"
+    web:
+        build: ./api/
+        restart: always
+        container_name: "frontend_mon"
+        ports:
+            - "3000:3000"
+        links:
+            - mongo
+        volumes:
+            - ./api:/app
+            - /app/node_modules
+        command:
+            [
+                "bash",
+                "./wait-for-it.sh",
+                "mongo:27017",
+                "--",
+                "npm",
+                "run",
+                "dev",
+            ]
